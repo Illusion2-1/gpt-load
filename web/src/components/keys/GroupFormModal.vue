@@ -34,7 +34,7 @@ interface Emits {
 // 配置项类型
 interface ConfigItem {
   key: string;
-  value: number;
+  value: number | string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -58,7 +58,7 @@ interface GroupFormData {
   test_model: string;
   validation_endpoint: string;
   param_overrides: string;
-  config: Record<string, number>;
+  config: Record<string, number | string>;
   configItems: ConfigItem[];
   proxy_keys: string;
 }
@@ -398,7 +398,7 @@ async function handleSubmit() {
     }
 
     // 将configItems转换为config对象
-    const config: Record<string, number> = {};
+    const config: Record<string, number | string> = {};
     formData.configItems.forEach((item: ConfigItem) => {
       if (item.key && item.key.trim()) {
         config[item.key] = item.value;
@@ -783,8 +783,16 @@ async function handleSubmit() {
                       <div class="config-value">
                         <n-tooltip trigger="hover" placement="top">
                           <template #trigger>
+                            <!-- 字符串类型配置项使用文本输入框 -->
+                            <n-input
+                              v-if="typeof getConfigOption(configItem.key)?.default_value === 'string'"
+                              v-model:value="configItem.value as string"
+                              placeholder="参数值（如：401,403）"
+                            />
+                            <!-- 数字类型配置项使用数字输入框 -->
                             <n-input-number
-                              v-model:value="configItem.value"
+                              v-else
+                              v-model:value="configItem.value as number"
                               placeholder="参数值"
                               :precision="0"
                             />

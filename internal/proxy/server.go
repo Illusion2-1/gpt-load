@@ -211,6 +211,11 @@ func (ps *ProxyServer) executeRequestWithRetry(
 			errorMessage = string(errorBody)
 			parsedError = app_errors.ParseUpstreamError(errorBody)
 			logrus.Debugf("Request failed with status %d (attempt %d/%d) for key %s. Parsed Error: %s", statusCode, retryCount+1, cfg.MaxRetries, utils.MaskAPIKey(apiKey.KeyValue), parsedError)
+
+			if statusCode != 200 {
+				ps.keyProvider.HandleStatusCodeInvalidation(apiKey, group, statusCode)
+			}
+
 		}
 
 		newRetryErrors := append(retryErrors, types.RetryError{

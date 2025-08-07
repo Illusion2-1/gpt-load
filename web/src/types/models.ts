@@ -29,6 +29,22 @@ export interface UpstreamInfo {
   weight: number;
 }
 
+// 分组配置接口
+export interface GroupConfig {
+  request_timeout?: number;
+  idle_conn_timeout?: number;
+  connect_timeout?: number;
+  max_idle_conns?: number;
+  max_idle_conns_per_host?: number;
+  response_header_timeout?: number;
+  max_retries?: number;
+  blacklist_threshold?: number;
+  status_code_as_invalid?: string;
+  key_validation_interval_minutes?: number;
+  key_validation_concurrency?: number;
+  key_validation_timeout_seconds?: number;
+}
+
 export interface Group {
   id?: number;
   name: string;
@@ -39,7 +55,7 @@ export interface Group {
   channel_type: "openai" | "gemini" | "anthropic";
   upstreams: UpstreamInfo[];
   validation_endpoint: string;
-  config: Record<string, unknown>;
+  config: GroupConfig;
   api_keys?: APIKey[];
   endpoint?: string;
   param_overrides: Record<string, unknown>;
@@ -52,7 +68,7 @@ export interface GroupConfigOption {
   key: string;
   name: string;
   description: string;
-  default_value: number;
+  default_value: number | string;
 }
 
 // GroupStatsResponse defines the complete statistics for a group.

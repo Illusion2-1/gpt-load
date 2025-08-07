@@ -237,6 +237,10 @@ func (sm *SystemSettingsManager) GetEffectiveConfig(groupConfigJSON datatypes.JS
 			if effectiveField.IsValid() && effectiveField.CanSet() {
 				if effectiveField.Type() == groupFieldValue.Type() {
 					effectiveField.Set(groupFieldValue)
+				} else if effectiveField.Kind() == reflect.String && groupFieldValue.Kind() == reflect.String {
+					effectiveField.SetString(groupFieldValue.String())
+				} else if effectiveField.Kind() == reflect.Int && groupFieldValue.Kind() == reflect.Int {
+					effectiveField.SetInt(groupFieldValue.Int())
 				}
 			}
 		}
