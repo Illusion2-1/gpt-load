@@ -290,10 +290,15 @@ function loadGroupData() {
     return;
   }
 
-  const configItems = Object.entries(props.group.config || {}).map(([key, value]) => ({
-    key,
-    value: Number(value) || 0,
-  }));
+  const configItems = Object.entries(props.group.config || {}).map(([key, value]) => {
+    const option = configOptions.value.find(opt => opt.key === key);
+    const isStringType = typeof option?.default_value === 'string';
+
+    return {
+      key,
+      value: isStringType ? String(value) : (Number(value) || 0),
+    };
+  });
   Object.assign(formData, {
     name: props.group.name || "",
     display_name: props.group.display_name || "",
@@ -362,7 +367,11 @@ function removeConfigItem(index: number) {
 function handleConfigKeyChange(index: number, key: string) {
   const option = configOptions.value.find(opt => opt.key === key);
   if (option) {
-    formData.configItems[index].value = option.default_value || 0;
+    if (typeof option.default_value === 'string') {
+      formData.configItems[index].value = option.default_value || '';
+    } else {
+      formData.configItems[index].value = option.default_value || 0;
+    }
   }
 }
 
